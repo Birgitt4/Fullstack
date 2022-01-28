@@ -12,8 +12,13 @@
     },
     {
       "name": "op",
-      "number": "112",
+      "number": "0900 689",
       "id": 7
+    },
+    {
+      "name": "Arto Hannus",
+      "number": "0400 345 123",
+      "id": 8
     }
   ]
 }
