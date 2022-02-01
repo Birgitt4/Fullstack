@@ -1,0 +1,3 @@
+[submodule "osa3/puhelinluettelo"]
+	path = osa3/puhelinluettelo
+	url = https://github.com/Birgitt4/Fullstack-osa3
