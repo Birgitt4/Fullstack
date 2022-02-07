@@ -1,3 +1,6 @@
 [submodule "osa3/puhelinluettelo"]
 	path = osa3/puhelinluettelo
 	url = https://github.com/Birgitt4/Fullstack-osa3
+[submodule "osa4/blogilista"]
+	path = osa4/blogilista
+	url = https://github.com/Birgitt4/Fullstack-osa4
