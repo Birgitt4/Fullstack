@@ -1,12 +1,41 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 /*
-5.4 toteuta notifikaatiot
+5.5
+Blogin luomisen lomakeesta tarvittaessa näytettävä versio
+Voi hyödyntää Togglable komponenttia
+Lomake sulkeutuu kun uusi blogi on luotu
+(nappi cancel?)
+
+5.6
+Blogin luominen omaan komponenttiin. Taitaa olla jo!
+
+5.7*
+Blogeille napit jota klikkaamalla blogin kaikki tiedot aukeavat
+url likes ja lisääjä.
+view -> hide
+helpoin ratkaisu lienee lisätä blogille tila, joka kontrolloi sitä missä
+muodossa blogi näytetään.
+
+5.8*
+Like painike + toiminta, put kaikki blogin kentät lähetettävä
+pyynnössä
+
+5.9*
+Järjestä sovellus näyttämään blogit likes järjestyksessä
+taulukon metodi sort
+
+5.10*
+Nappi blogin poistamiselle
+poiston varmistus: window.confirm
+Poistonappi näkyy vain jos blogi on kirjautuneen käyttäjän
+lisäämä
 */
 
 const App = () => {
@@ -15,13 +44,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: ''
-  })
-
-
   
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -63,9 +85,9 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = async (event) => {
-    event.preventDefault()
+  const addBlog = async (newBlog) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const returnedBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(returnedBlog))
       setErrorMessage(
@@ -74,11 +96,6 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 4000)
-      setNewBlog({
-        title: '',
-        author: '',
-        url: '',
-      })
     } catch (exception) {
       setErrorMessage('There happened an error. Blog was not saved!')
       setTimeout(() => {
@@ -88,28 +105,14 @@ const App = () => {
     
   }
 
-  const handleBlogChange = (event) => {
-    if (event.target.name === 't') {
-      setNewBlog({
-        ...newBlog,
-        title: event.target.value
-      })
-    }
-    else if (event.target.name === 'a') {
-      setNewBlog({
-        ...newBlog,
-        author: event.target.value
-      })
-    }
+  const blogFormRef = useRef()
 
-    if (event.target.name === 'u') {
-      setNewBlog({
-        ...newBlog,
-        url: event.target.value
-      })
-    }
-    
-  }
+  const blogForm = () => (
+    <Togglable buttonLabel='add new blog' ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
+  )
+
 
   if (user === null) {
     return (
@@ -145,8 +148,7 @@ const App = () => {
         {user.name} logged in
         <button onClick={logout}>logout</button>
       </p>
-      <h2>create new</h2>
-      <NewBlog newBlog={newBlog} addBlog={addBlog} handleBlogChange={handleBlogChange}/>
+      {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
