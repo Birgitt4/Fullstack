@@ -7,10 +7,6 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 
 /*
-5.9*
-Järjestä sovellus näyttämään blogit likes järjestyksessä
-taulukon metodi sort
-
 5.10*
 Nappi blogin poistamiselle
 poiston varmistus: window.confirm
@@ -85,6 +81,22 @@ const App = () => {
     
   }
 
+  const deleteBlog = async (blog) => {
+    try {
+      await blogService.deleteBlog(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+      setErrorMessage(`Blog '${blog.title}' were removed`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 4000)
+    } catch (exception) {
+      setErrorMessage('error')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 4000)
+    }
+  }
+
   //Userista jää vain id joten nimi katoaa näkyvistä jos blogin
   //tietoihin lisää userin koko olion tulee vastauksena 400
   const likeBlog = async (updatedBlog) => {
@@ -94,6 +106,7 @@ const App = () => {
       console.log(returnedBlog)
       const updatedBlogs = blogs.filter(b => b.id !== updatedBlog.id)
       setBlogs(updatedBlogs.concat(returnedBlog))
+
     } catch (exception) {
       setErrorMessage('error occured')
       setTimeout(() => {
@@ -146,8 +159,8 @@ const App = () => {
         <button onClick={logout}>logout</button>
       </p>
       {blogForm()}
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
+      {blogs.sort((b1,b2) => b1.likes < b2.likes ? 1 : -1 ).map(blog =>
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} remove={deleteBlog}/>
       )}
     </div>
   )
