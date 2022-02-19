@@ -7,26 +7,6 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 
 /*
-5.5
-Blogin luomisen lomakeesta tarvittaessa näytettävä versio
-Voi hyödyntää Togglable komponenttia
-Lomake sulkeutuu kun uusi blogi on luotu
-(nappi cancel?)
-
-5.6
-Blogin luominen omaan komponenttiin. Taitaa olla jo!
-
-5.7*
-Blogeille napit jota klikkaamalla blogin kaikki tiedot aukeavat
-url likes ja lisääjä.
-view -> hide
-helpoin ratkaisu lienee lisätä blogille tila, joka kontrolloi sitä missä
-muodossa blogi näytetään.
-
-5.8*
-Like painike + toiminta, put kaikki blogin kentät lähetettävä
-pyynnössä
-
 5.9*
 Järjestä sovellus näyttämään blogit likes järjestyksessä
 taulukon metodi sort
@@ -105,6 +85,23 @@ const App = () => {
     
   }
 
+  //Userista jää vain id joten nimi katoaa näkyvistä jos blogin
+  //tietoihin lisää userin koko olion tulee vastauksena 400
+  const likeBlog = async (updatedBlog) => {
+    try {
+      console.log(updatedBlog)
+      const returnedBlog = await blogService.update(updatedBlog)
+      console.log(returnedBlog)
+      const updatedBlogs = blogs.filter(b => b.id !== updatedBlog.id)
+      setBlogs(updatedBlogs.concat(returnedBlog))
+    } catch (exception) {
+      setErrorMessage('error occured')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000)
+    }
+  }
+
   const blogFormRef = useRef()
 
   const blogForm = () => (
@@ -150,7 +147,7 @@ const App = () => {
       </p>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
       )}
     </div>
   )
