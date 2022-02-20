@@ -100,9 +100,7 @@ const App = () => {
     //tietoihin lisää userin koko olion tulee vastauksena 400
     const likeBlog = async (updatedBlog) => {
         try {
-            console.log(updatedBlog)
             const returnedBlog = await blogService.update(updatedBlog)
-            console.log(returnedBlog)
             const updatedBlogs = blogs.filter(b => b.id !== updatedBlog.id)
             setBlogs(updatedBlogs.concat(returnedBlog))
 
@@ -130,20 +128,20 @@ const App = () => {
                 <h1>log in to application</h1>
                 <form onSubmit={handleLogin}>
                     <div>
-            username
+                        username
                         <input
-                            type='text' value={username} name='Username'
+                            id='username' type='text' value={username}
                             onChange={({ target }) => setUsername(target.value)}
                         />
                     </div>
                     <div>
-            password
+                        password
                         <input
-                            type='password' value={password} name='Password'
+                            id='password' type='password' value={password}
                             onChange={({ target }) => setPassword(target.value)}
                         />
                     </div>
-                    <button type='submit'>login</button>
+                    <button id='login-button' type='submit'>login</button>
                 </form>
             </div>
         )

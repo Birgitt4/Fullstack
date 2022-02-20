@@ -17,7 +17,6 @@ const Blog = ({ blog, likeBlog, remove }) => {
 
     const logged = JSON.parse(window.localStorage.getItem('loggedUser'))
     const ownBlog = { display: (logged) && (blog.user.username === logged.username) ? '' : 'none' }
-
     const toggleVisibility = () => {
         setViewInfo(!viewInfo)
     }
