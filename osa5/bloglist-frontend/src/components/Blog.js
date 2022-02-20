@@ -16,7 +16,7 @@ const Blog = ({ blog, likeBlog, remove }) => {
     const showWhenView = { display: viewInfo ? '' : 'none' }
 
     const logged = JSON.parse(window.localStorage.getItem('loggedUser'))
-    const ownBlog = { display: blog.user.username === logged.username ? '' : 'none' }
+    const ownBlog = { display: (logged) && (blog.user.username === logged.username) ? '' : 'none' }
 
     const toggleVisibility = () => {
         setViewInfo(!viewInfo)
@@ -44,9 +44,9 @@ const Blog = ({ blog, likeBlog, remove }) => {
                 {blog.title} {blog.author}
                 <button style={hideWhenView} onClick={toggleVisibility}>view</button>
                 <button style={showWhenView} onClick={toggleVisibility}>hide</button>
-                <div style={showWhenView}>
+                <div style={showWhenView} className='blogInfo'>
                     {blog.url}<br/>
-          likes {blog.likes}
+                    likes {blog.likes}
                     <button onClick={like}>like</button><br/>
                     {blog.user.name}<br/>
                     <button style={ownBlog} onClick={deleteBlog}>remove</button>

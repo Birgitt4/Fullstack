@@ -9,20 +9,20 @@ const BlogForm = ({ createBlog }) => {
     })
 
     const handleChange = (event) => {
-        if (event.target.name === 't') {
+        if (event.target.id === 't') {
             setNewBlog({
                 ...newBlog,
                 title: event.target.value
             })
         }
-        else if (event.target.name === 'a') {
+        else if (event.target.id === 'a') {
             setNewBlog({
                 ...newBlog,
                 author: event.target.value
             })
         }
 
-        if (event.target.name === 'u') {
+        if (event.target.id === 'u') {
             setNewBlog({
                 ...newBlog,
                 url: event.target.value
@@ -46,15 +46,15 @@ const BlogForm = ({ createBlog }) => {
             <form onSubmit={addBlog}>
                 <div>
                     title
-                    <input type='text' value={newBlog.title} name='t' onChange={handleChange}/>
+                    <input type='text' value={newBlog.title} id='t' onChange={handleChange} />
                 </div>
                 <div>
                     author
-                    <input type='text' value={newBlog.author} name='a' onChange={handleChange}/>
+                    <input type='text' value={newBlog.author} id='a' onChange={handleChange}/>
                 </div>
                 <div>
                     url
-                    <input type='text' value={newBlog.url} name='u' onChange={handleChange}/>
+                    <input type='text' value={newBlog.url} id='u' onChange={handleChange}/>
                 </div>
                 <button type="submit">create</button>
             </form>
