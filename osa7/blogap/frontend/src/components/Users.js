@@ -1,31 +1,19 @@
-import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-import service from '../services/users'
-import Notification from './Notification'
-
-
-const User = (props) => {
+const UserTable = (props) => {
     return (
         <tr>
-            <td>{props.name}</td><td>{props.blogs}</td>
+            <td><Link to={`/users/${props.user.id}`}>{props.user.name}</Link></td><td>{props.user.blogs.length}</td>
         </tr>
     )
 }
 
 const Users = () => {
-    const notification = useSelector(state => state.notification)
-    const [users, setUsers] = useState([])
-
-    useEffect(() => {
-        service.getAll().then(users =>
-            setUsers( users )
-        )
-    }, [])
+    const users = useSelector(state => state.users)
 
     return (
         <div>
-            <Notification message={notification} />
             <h2>users</h2>
             <table>
                 <tbody>
@@ -33,7 +21,7 @@ const Users = () => {
                         <th></th><th>blogs created</th>
                     </tr>
                     {users.map((user) =>
-                        <User key={user.id} name={user.name} blogs={user.blogs.length} />
+                        <UserTable key={user.id} user={user} />
                     )}
                 </tbody>
             </table>
