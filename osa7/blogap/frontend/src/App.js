@@ -5,61 +5,26 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import Users from './components/Users'
+
+import {
+    BrowserRouter as Router,
+    Routes, Route, Link
+} from 'react-router-dom'
 
 import { setNotification } from './reducers/notificationReducer'
 import { useSelector, useDispatch } from 'react-redux'
 
-
-
-const App = () => {
+const Blogs = () => {
     const dispatch = useDispatch()
     const notification = useSelector(state => state.notification)
-
     const [blogs, setBlogs] = useState([])
-    const [username, setUsername] = useState('')
-    //const [errorMessage, setErrorMessage] = useState(null)
-    const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
             setBlogs( blogs )
         )
     }, [])
-
-    useEffect(() => {
-        const loggedUserJSON = window.localStorage.loggedUser
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON)
-            setUser(user)
-            blogService.setToken(user.token)
-        }
-    }, [])
-
-    const handleLogin = async (event) => {
-        event.preventDefault()
-
-        try {
-            const user = await loginService.login({ username, password })
-            window.localStorage.setItem('loggedUser', JSON.stringify(user))
-
-            blogService.setToken(user.token)
-            setUser(user)
-            setUsername('')
-            setPassword('')
-        } catch (exception) {
-            //setErrorMessage('wrong username or password')
-            //setTimeout(() => {
-            //    setErrorMessage(null)
-            //}, 4000)
-            dispatch(setNotification('wrong username or password', 4))
-        }
-    }
-
-    const logout = () => {
-        window.localStorage.removeItem('loggedUser')
-        setUser(null)
-    }
 
     const addBlog = async (newBlog) => {
         try {
@@ -80,7 +45,6 @@ const App = () => {
             }, 4000)*/
             dispatch(setNotification('There happened an error. Blog was not saved!', 4))
         }
-
     }
 
     const deleteBlog = async (blog) => {
@@ -126,6 +90,60 @@ const App = () => {
         </Togglable>
     )
 
+    return (
+        <div>
+            <Notification message={notification} />
+            <h2>blogs</h2>
+            {blogForm()}
+            {blogs.sort((b1,b2) => b1.likes < b2.likes ? 1 : -1 ).map(blog =>
+                <Blog key={blog.id} blog={blog} likeBlog={likeBlog} remove={deleteBlog}/>
+            )}
+        </div>
+    )
+}
+
+const App = () => {
+    const dispatch = useDispatch()
+    const notification = useSelector(state => state.notification)
+
+    const [username, setUsername] = useState('')
+    //const [errorMessage, setErrorMessage] = useState(null)
+    const [password, setPassword] = useState('')
+    const [user, setUser] = useState(null)
+
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.loggedUser
+        if (loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON)
+            setUser(user)
+            blogService.setToken(user.token)
+        }
+    }, [])
+
+    const handleLogin = async (event) => {
+        event.preventDefault()
+
+        try {
+            const user = await loginService.login({ username, password })
+            window.localStorage.setItem('loggedUser', JSON.stringify(user))
+
+            blogService.setToken(user.token)
+            setUser(user)
+            setUsername('')
+            setPassword('')
+        } catch (exception) {
+            //setErrorMessage('wrong username or password')
+            //setTimeout(() => {
+            //    setErrorMessage(null)
+            //}, 4000)
+            dispatch(setNotification('wrong username or password', 4))
+        }
+    }
+
+    const logout = () => {
+        window.localStorage.removeItem('loggedUser')
+        setUser(null)
+    }
 
     if (user === null) {
         return (
@@ -153,19 +171,23 @@ const App = () => {
         )
     }
 
+    const padding = {
+        paddingRight: 5
+    }
+
     return (
-        <div>
-            <Notification message={notification} />
-            <h2>blogs</h2>
-            <p>
-                {user.name} logged in
-                <button onClick={logout}>logout</button>
-            </p>
-            {blogForm()}
-            {blogs.sort((b1,b2) => b1.likes < b2.likes ? 1 : -1 ).map(blog =>
-                <Blog key={blog.id} blog={blog} likeBlog={likeBlog} remove={deleteBlog}/>
-            )}
-        </div>
+        <Router>
+            <div>
+                <Link style={padding} to='/' >blogs</Link>
+                <Link style={padding} to='/users' >users</Link>
+                {user.name} logged in <button onClick={logout}>logout</button>
+            </div>
+
+            <Routes>
+                <Route path='/' element={<Blogs />} />
+                <Route path='/users' element={<Users />} />
+            </Routes>
+        </Router>
     )
 }
 
