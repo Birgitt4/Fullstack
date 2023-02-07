@@ -1,1 +1,1 @@
-Full Stack -websovelluskehitys kurssin tehtävät
+Helsingin yliopiston kurssin Full Stack -websovelluskehitys tehtäviä
